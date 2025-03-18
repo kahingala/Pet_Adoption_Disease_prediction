@@ -2,6 +2,7 @@ import { AppBar, Toolbar, Typography, IconButton, Button, Box, Drawer, List, Lis
 import MenuIcon from "@mui/icons-material/Menu";
 import PetsIcon from "@mui/icons-material/Pets";
 import { useState } from "react";
+import { Link } from "react-router-dom";
 
 const Header = () => {
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -20,6 +21,8 @@ const Header = () => {
         <Typography variant="h6" sx={{ flexGrow: 1, fontWeight: "bold" }}>
           PetCare
         </Typography>
+        <Button color="inherit" component={Link} to="/">Home</Button>
+        <Button color="inherit" component={Link} to="/fundraising">Fundraising</Button>
 
         {/* Desktop Navigation */}
         {!isMobile && (
