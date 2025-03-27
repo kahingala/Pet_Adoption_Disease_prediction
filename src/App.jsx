@@ -6,7 +6,10 @@ import Campaigns from "./components/Campaigns/Campaigns";
 import TopDonors from "./components/Donate/TopDonors";
 import DonationHistory from "./components/Donate/DonationHistory";
 import DonationForm from "./components/Donate/DonationForm";
-
+import CampaignList from './components/Campaigns/CampaignList';
+import CampaignDetails from './components/Campaigns/CampaignDetails';
+import AdminDashboard from './components/AdminDashboard';
+import CampaignForm from './components/Campaigns/CampaignForm';
 
 function App() {
   
@@ -20,6 +23,14 @@ function App() {
         <Route path="/top-donors" element={<TopDonors />}/>
         <Route path="/d-history" element={<DonationHistory />}/>
         <Route path="/d-form" element={<DonationForm />}/>
+
+        <Route path="/campaignlist" element={<CampaignList />} />
+          <Route path="/campaigns/:id" element={<CampaignDetails />} />
+          <Route path="/admin/dashboard" element={<AdminDashboard />} />
+          <Route path="/admin/campaigns/create" element={<CampaignForm onSubmit={() => console.log('Create submitted')} isEdit={false} />} />
+          {/* Example Edit Route: */}
+          {/* <Route path="/admin/campaigns/edit/:id" element={<CampaignForm onSubmit={() => console.log('Edit submitted')} isEdit={true} />} /> */}
+        
       </Routes>
       <Footer />
     </Router>

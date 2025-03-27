@@ -2,6 +2,7 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 //const dotenv = require('dotenv');
+const cors = require('cors'); 
 const {connectDB, closeDatabaseConnection } = require('./config/database');
 const campaignRoutes = require('./routes/campaignRoutes');
 const donationRoutes = require('./routes/donationRoutes');
@@ -17,6 +18,7 @@ const app = express();
 
 // Middleware to parse JSON request bodies
 app.use(express.json());
+app.use(cors());
 
 // Define routes
 app.use('/api/campaigns', campaignRoutes);
