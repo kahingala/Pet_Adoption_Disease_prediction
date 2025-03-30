@@ -1,45 +1,50 @@
 const express = require("express");
-const mongoose = require("mongoose");
-const bodyParser = require("body-parser");
-const dotenv = require("dotenv");
-const cors = require("cors");
+const router = express.Router();
 
-require('dotenv').config(); // Load dotenv at the beginning
+// Example mock data for pets (replace with real DB logic)
+const pets = [
+  { id: 1, name: "Buddy", type: "Dog", age: 3 },
+  { id: 2, name: "Mittens", type: "Cat", age: 2 },
+];
 
-const app = express();
-const PORT = process.env.PORT || 5000;
-
-// CORS Middleware
-app.use(
-  cors({
-    origin: ["http://localhost:4000", "http://localhost:3000"], // Allow both 4000 and 3000 for frontend
-    methods: ["GET", "POST", "PUT", "DELETE"],
-    credentials: true,
-  })
-);
-
-// Middleware
-app.use(bodyParser.json());
-
-// MongoDB Connection
-const URL = process.env.MONGODB_URL;
-
-mongoose
-  .connect(URL, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-  })
-  .then(() => console.log("MongoDB Connection Success!"))
-  .catch((err) => console.error("MongoDB Connection Error:", err));
-
-// Routes
-
-const petRouter = require("./routes/Pets.js"); // Added pet routes
-
-
-app.use("/Pets", petRouter); // Added pet route
-
-// Start Server
-app.listen(PORT, () => {
-  console.log(`Server is up and running on port number: ${PORT}`);
+// GET /pets - Fetch all pets
+router.get("/", (req, res) => {
+  res.json(pets);
 });
+
+// POST /pets - Add a new pet
+router.post("/", (req, res) => {
+  const newPet = req.body;
+  newPet.id = pets.length + 1; // Simple ID increment
+  pets.push(newPet);
+  res.status(201).json(newPet);
+});
+
+// PUT /pets/:id - Update a pet by ID
+router.put("/:id", (req, res) => {
+  const petId = parseInt(req.params.id);
+  const updatedPet = req.body;
+
+  const index = pets.findIndex((pet) => pet.id === petId);
+  if (index !== -1) {
+    pets[index] = { ...pets[index], ...updatedPet };
+    res.json(pets[index]);
+  } else {
+    res.status(404).json({ error: "Pet not found" });
+  }
+});
+
+// DELETE /pets/:id - Delete a pet by ID
+router.delete("/:id", (req, res) => {
+  const petId = parseInt(req.params.id);
+  const index = pets.findIndex((pet) => pet.id === petId);
+
+  if (index !== -1) {
+    const deletedPet = pets.splice(index, 1);
+    res.json(deletedPet);
+  } else {
+    res.status(404).json({ error: "Pet not found" });
+  }
+});
+
+module.exports = router;

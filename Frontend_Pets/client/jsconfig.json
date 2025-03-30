@@ -1,0 +1,6 @@
+{
+    "copilerOptions":{
+        "baseUrl":"srd"
+    },
+    "include":["src"]
+}

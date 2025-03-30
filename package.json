@@ -1,0 +1,9 @@
+{
+  "scripts": {
+  "start": "concurrently \"npm run start:website\" \"npm run start:admin\"",
+  "start:website": "cd client && PORT=3001 npm run dev",
+"start:admin": "cd FRONTEND && PORT=3002 npm run dev"
+
+}
+
+}
