@@ -7,7 +7,7 @@ function App() {
         <Router>
             <Routes>
                 {/* Default route that redirects to /symptom */}
-                <Route path="/" element={<Navigate to="/symptom" />} />
+                <Route path="/" element={<Navigate to="/symptom" replace />} />
                 <Route path="/symptom" element={<Symptom />} />
                 <Route path="/disease" element={<Disease />} />
             </Routes>
