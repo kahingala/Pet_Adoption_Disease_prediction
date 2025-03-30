@@ -43,29 +43,27 @@ function Symptom() {
 
     const handleChange = (e) => {
         const { name, value } = e.target;
+        let newValue = value;
+        let errorMessage = "";
 
-        // Fields that only allow integers (Weight, Body Temperature, Heart Rate, Duration)
-        if (["weight", "bodyTemperature", "heartRate", "duration"].includes(name)) {
-            // Only allow digits
-            if (!/^\d*$/.test(value)) {
-                setErrors({ ...errors, [name]: `${name} must be a valid integer!` });
-                return; // Prevent input if it's not a valid integer
-            } else {
-                setErrors({ ...errors, [name]: "" }); // Clear error if the input is valid
+        // Validation for Animal Type, Breed, and Gender (Only letters and spaces allowed)
+        if (["animalType", "breed", "gender"].includes(name)) {
+            if (!/^[a-zA-Z\s]*$/.test(value)) {
+                errorMessage = `${name} should only contain letters and spaces!`;
+                newValue = value.replace(/[^a-zA-Z\s]/g, ""); // Remove invalid characters
             }
         }
 
-        // Allow only letters, numbers, and spaces for other fields
-        const filteredValue = value.replace(/[^a-zA-Z0-9\s]/g, "");
-        
-        setFormData({ ...formData, [name]: filteredValue });
-
-        // Show error message if the user tries to enter a special character
-        if (value !== filteredValue) {
-            setErrors({ ...errors, [name]: "Special characters are not allowed!" });
-        } else {
-            setErrors({ ...errors, [name]: "" });
+        // Validation for fields that should only allow numbers
+        if (["weight", "bodyTemperature", "heartRate", "duration"].includes(name)) {
+            if (!/^\d*$/.test(value)) {
+                errorMessage = `${name} must be a valid integer!`;
+                newValue = value.replace(/\D/g, ""); // Remove non-numeric characters
+            }
         }
+
+        setFormData({ ...formData, [name]: newValue });
+        setErrors({ ...errors, [name]: errorMessage });
     };
 
     const isFormValid = () => {
@@ -110,7 +108,6 @@ function Symptom() {
                         Predict Disease
                     </button>
                 </div>
-
             </form>
         </div>
     );
@@ -164,5 +161,6 @@ const renderDropdown = (label, name, formData, handleChange, errors, options) =>
         </div>
     );
 };
+
 
 export default Symptom;
