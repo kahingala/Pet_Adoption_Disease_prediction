@@ -78,6 +78,9 @@ const CampaignForm = ({ initialValues, onSubmit, isEdit }) => {
       validationErrors.goalAmount = 'Goal amount must be a positive number';
     }
     if (!formData.category) validationErrors.category = 'Category is required';
+    if (!imageFile) {
+      validationErrors.image = 'Image is required';
+    }
 
     if (Object.keys(validationErrors).length > 0) {
       setErrors(validationErrors);
@@ -241,7 +244,10 @@ const CampaignForm = ({ initialValues, onSubmit, isEdit }) => {
         //fullWidth
         margin="normal"
        // disabled // Implement actual upload logic
-      />
+             />
+             {errors.image && (
+        <Typography color="error">{errors.image}</Typography>
+      )}
       <Button onClick={handleUploadImage} sx={{ marginTop: 3 }}>Upload Image</Button>
       {imageUrl && <img src={imageUrl} alt="Uploaded" style={{ maxWidth: '200px' }} />}
       <Button type="submit" variant="contained" disabled={loading} color="primary" sx={{ marginTop: 2 }}>

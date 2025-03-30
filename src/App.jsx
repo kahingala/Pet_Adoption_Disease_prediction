@@ -1,6 +1,6 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Dashboard from "./components/Dashboard";
-import Footer from "./components/Footer";
+import Footer1 from './components/footer1';
 import Header from "./components/Header";
 import Campaigns from "./components/Campaigns/Campaigns";
 import TopDonors from "./components/Donate/TopDonors";
@@ -34,7 +34,7 @@ function App() {
            <Route path="/admin/campaigns/edit/:id" element={<EditCampaign />} /> 
         
       </Routes>
-      <Footer />
+    <Footer1 />
     </Router>
   )
 }
