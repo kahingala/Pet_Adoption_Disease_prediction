@@ -10,6 +10,7 @@ const ProgressIndicator = ({ current, goal }) => {
       <Typography variant="caption" color="text.secondary">
         {`$${current.toFixed(2)} raised of $${goal.toFixed(2)}`}
       </Typography>
+      
       <LinearProgress variant="determinate" value={percentage} sx={{ marginTop: 0.5 }} />
       <Typography variant="caption" color="text.secondary" sx={{ textAlign: 'right' }}>
         {`${percentage.toFixed(0)}% Funded`}

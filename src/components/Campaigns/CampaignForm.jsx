@@ -4,8 +4,13 @@ import { TextField, Button, Box, Typography, FormControl, InputLabel, Select, Me
 import axios from 'axios';
 import { API_BASE_URL } from '../../api';
 import { useNavigate, useParams } from 'react-router-dom';
+import { CircularProgress } from '@mui/material';
+import { updateCampaign } from '../../Redux/campaignActions';
+import { useDispatch } from 'react-redux';
 
 const CampaignForm = ({ initialValues, onSubmit, isEdit }) => {
+  console.log('CampaignForm rendered');
+  const dispatch = useDispatch();
   const [formData, setFormData] = useState(initialValues || {
     title: '',
     description: '',
@@ -15,7 +20,11 @@ const CampaignForm = ({ initialValues, onSubmit, isEdit }) => {
     category: '',
     images: [],
   });
+
+  const [imageFile, setImageFile] = useState(null);
+  const [imageUrl, setImageUrl] = useState(null);
   const [errors, setErrors] = useState({});
+  const [loading, setLoading] = useState(false); // Add loading state
   const navigate = useNavigate();
   const { id } = useParams(); // For edit mode
 
@@ -32,14 +41,36 @@ const CampaignForm = ({ initialValues, onSubmit, isEdit }) => {
   };
 
   const handleImageChange = (e) => {
+    setImageFile(...e.target.files);
     // Implement image upload handling here (e.g., file input)
-    const files = Array.from(e.target.files);
-    const imageNames = files.map(file => file.name); // Placeholder
-    setFormData({ ...formData, images: imageNames });
+    //const files = Array.from(e.target.files);
+    //const imageNames = files.map(file => file.name); // Placeholder
+    //setFormData({ ...formData, images: imageNames });
+  };
+  const handleUploadImage = async () => {
+    if (!imageFile) {
+      return;
+    }
+
+    const formDataUpload = new FormData();
+    formDataUpload.append('image', imageFile);
+
+    try {
+      const response = await axios.post(`${API_BASE_URL}/api/upload`, formDataUpload, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
+      setImageUrl(response.data.imageUrl);
+      setFormData({ ...formData, images: [response.data.imageUrl] });
+    } catch (error) {
+      console.error('Image upload error:', error);
+    }
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setLoading(true);
     const validationErrors = {};
     if (!formData.title) validationErrors.title = 'Title is required';
     if (!formData.description) validationErrors.description = 'Description is required';
@@ -50,20 +81,32 @@ const CampaignForm = ({ initialValues, onSubmit, isEdit }) => {
 
     if (Object.keys(validationErrors).length > 0) {
       setErrors(validationErrors);
+      setLoading(false);
       return;
     }
 
     try {
-      const url = isEdit ? `${API_BASE_URL}/api/campaigns/${id}` : `${API_BASE_URL}/api/campaigns`;
+     
+     /* const url = isEdit ? `${API_BASE_URL}/api/campaigns/${id}` : `${API_BASE_URL}/api/campaigns`;
       const method = isEdit ? 'put' : 'post';
 
       const response = await axios({
         method: method,
         url: url,
         data: formData,
-      });
+      });*/
+      if (isEdit) {
+        // Edit mode: Use Redux action
+        console.log('Campaign data before dispatch:', formData);
+        await dispatch(updateCampaign({ ...formData, _id: id }));
+      } else {
+        // Create mode: Use axios post
+        const url = `${API_BASE_URL}/api/campaigns`;
+        const response = await axios.post(url, formData);
+        console.log('Campaign saved:', response.data);
+      }
 
-      console.log('Campaign saved:', response.data);
+      //console.log('Campaign saved:', response.data);
       
       setFormData({
         title: '',
@@ -75,10 +118,13 @@ const CampaignForm = ({ initialValues, onSubmit, isEdit }) => {
         images: [],
       }); // Clear the form on success
       setErrors({});
-      navigate('/admin/dashboard'); // Redirect after successful submission
+      navigate('/campaignlist'); // Redirect after successful submission
     } catch (err) {
       console.error('Form submission error:', err);
       // Handle form submission errors (e.g., display a general error message)
+    }finally {
+      setLoading(false); // Stop loading
+      
     }
   };
 
@@ -105,6 +151,7 @@ const CampaignForm = ({ initialValues, onSubmit, isEdit }) => {
         margin="normal"
         error={!!errors.title}
         helperText={errors.title}
+        disabled={loading}
       />
       <TextField
         label="Description"
@@ -117,6 +164,7 @@ const CampaignForm = ({ initialValues, onSubmit, isEdit }) => {
         margin="normal"
         error={!!errors.description}
         helperText={errors.description}
+        disabled={loading}
       />
       <TextField
         label="Goal Amount ($)"
@@ -128,6 +176,7 @@ const CampaignForm = ({ initialValues, onSubmit, isEdit }) => {
         type="number"
         error={!!errors.goalAmount}
         helperText={errors.goalAmount}
+        disabled={loading}
       />
       <TextField
         label="Start Date"
@@ -137,6 +186,7 @@ const CampaignForm = ({ initialValues, onSubmit, isEdit }) => {
         fullWidth
         margin="normal"
         type="date"
+        disabled={loading}
         sx={{
     '& label': {
       color: 'black',
@@ -156,6 +206,7 @@ const CampaignForm = ({ initialValues, onSubmit, isEdit }) => {
         fullWidth
         margin="normal"
         type="date"
+        disabled={loading}
         sx={{
     '& label': {
       color: 'black',
@@ -172,6 +223,7 @@ const CampaignForm = ({ initialValues, onSubmit, isEdit }) => {
           value={formData.category}
           label="Category"
           onChange={handleChange}
+          disabled={loading}
         >
           {categories.map((cat) => (
             <MenuItem key={cat} value={cat}>
@@ -186,13 +238,16 @@ const CampaignForm = ({ initialValues, onSubmit, isEdit }) => {
         type="file"
         multiple
         onChange={handleImageChange}
-        fullWidth
+        //fullWidth
         margin="normal"
-        disabled // Implement actual upload logic
+       // disabled // Implement actual upload logic
       />
-      <Button type="submit" variant="contained" color="primary" sx={{ marginTop: 2 }}>
+      <Button onClick={handleUploadImage} sx={{ marginTop: 3 }}>Upload Image</Button>
+      {imageUrl && <img src={imageUrl} alt="Uploaded" style={{ maxWidth: '200px' }} />}
+      <Button type="submit" variant="contained" disabled={loading} color="primary" sx={{ marginTop: 2 }}>
         {isEdit ? 'Update Campaign' : 'Create Campaign'}
       </Button>
+      {loading && <CircularProgress />}
     </Box>
   );
 };

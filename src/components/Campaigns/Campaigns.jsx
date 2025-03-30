@@ -29,7 +29,7 @@ const Campaigns = () => {
           <Grid item key={campaign.id} xs={12} sm={6} md={4}>
             <motion.div whileHover={{ scale: 1.05 }} transition={{ duration: 0.3 }}>
               <Card sx={{ boxShadow: 5, borderRadius: 3, overflow: "hidden" }}>
-                <img src={campaign.image} alt={campaign.title} width="100%" height="150px" style={{ objectFit: "cover" }} />
+                <img src={campaign.image} alt={campaign.title} width="100%" height="150px" style={{ objectFit: "cover",  }} />
                 <CardContent>
                   <Typography variant="h5" sx={{ fontWeight: "bold" }}>{campaign.title}</Typography>
                   <Typography variant="body2" sx={{ my: 1 }}>{campaign.description}</Typography>

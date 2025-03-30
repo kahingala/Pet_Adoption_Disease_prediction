@@ -10,6 +10,8 @@ import CampaignList from './components/Campaigns/CampaignList';
 import CampaignDetails from './components/Campaigns/CampaignDetails';
 import AdminDashboard from './components/AdminDashboard';
 import CampaignForm from './components/Campaigns/CampaignForm';
+import EditCampaign from './components/Campaigns/EditCampaign';
+
 
 function App() {
   
@@ -29,7 +31,7 @@ function App() {
           <Route path="/admin/dashboard" element={<AdminDashboard />} />
           <Route path="/admin/campaigns/create" element={<CampaignForm onSubmit={() => console.log('Create submitted')} isEdit={false} />} />
           {/* Example Edit Route: */}
-          {/* <Route path="/admin/campaigns/edit/:id" element={<CampaignForm onSubmit={() => console.log('Edit submitted')} isEdit={true} />} /> */}
+           <Route path="/admin/campaigns/edit/:id" element={<EditCampaign />} /> 
         
       </Routes>
       <Footer />

@@ -8,6 +8,8 @@ const campaignRoutes = require('./routes/campaignRoutes');
 const donationRoutes = require('./routes/donationRoutes');
 //const userRoutes = require('./routes/userRoutes');
 //const adminRoutes = require('./routes/adminRoutes');
+const multer = require('multer');
+const path = require('path');
 
 // Load environment variables
 //dotenv.config();
@@ -37,3 +39,39 @@ process.on('SIGINT', async () => {
   await closeDatabaseConnection();
   process.exit(0);
 });
+
+
+// Configure multer for local storage
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    // Specify the directory where images will be stored
+    cb(null, 'uploads/'); // Create an 'uploads' folder in your project directory
+  },
+  filename: (req, file, cb) => {
+    // Generate a unique filename (e.g., timestamp + original name)
+    cb(null, Date.now() + path.extname(file.originalname));
+  },
+});
+
+const upload = multer({ storage: storage });
+
+// Create the 'uploads' directory if it doesn't exist
+const fs = require('fs');
+if (!fs.existsSync('./uploads')) {
+  fs.mkdirSync('./uploads');
+}
+
+// Route to handle image uploads
+app.post('/api/upload', upload.single('image'), (req, res) => {
+  if (!req.file) {
+    return res.status(400).json({ message: 'No image uploaded' });
+  }
+
+  // req.file.filename contains the generated filename
+  const imageUrl = `Backend/uploads/${req.file.filename}`; // Construct the image URL
+
+  res.json({ imageUrl });
+});
+
+// Serve static files from the 'uploads' directory
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));

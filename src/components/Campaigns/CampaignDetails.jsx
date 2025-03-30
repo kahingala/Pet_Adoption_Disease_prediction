@@ -33,22 +33,24 @@ const CampaignDetails = () => {
 
   return (
     <Box sx={{ padding: 2 }}>
-      <Typography variant="h4" gutterBottom>
+    <br/>
+      <Typography variant="h4" gutterBottom sx={{ textAlign: 'center' }}>
         {campaign.title}
       </Typography>
+      <br/>
       {campaign.images && campaign.images.length > 0 && (
-        <CardMedia
-          component="img"
-          sx={{ height: 200, marginBottom: 2 }}
-          image={campaign.images[0]}
-          alt={campaign.title}
-        />
-      )}
-      <Typography variant="body1" paragraph>
+        <>
+        {console.log('Image URL:', campaign.images[0])}
+    {console.log('CardMedia rendered')}
+    <img src={`../${campaign.images[0]}`}  alt={campaign.title} style={{ maxWidth: '800px',display: 'block',  margin: '0 auto' }} />
+     </> )}
+     <br/>
+      <Typography variant="body1" paragraph sx={{ textAlign: 'center' }}>
+      <br/>
         {campaign.description}
       </Typography>
-      <Box sx={{ marginBottom: 2 }}>
-        <Typography variant="subtitle1">Category: {campaign.category}</Typography>
+      <Box sx={{ marginBottom: 2, textAlign: 'center' }}>
+        <Typography variant="subtitle1" fontWeight="bold">Category: {campaign.category}</Typography>
         {campaign.startDate && (
           <Typography variant="subtitle1">Start Date: {new Date(campaign.startDate).toLocaleDateString()}</Typography>
         )}
@@ -56,9 +58,21 @@ const CampaignDetails = () => {
           <Typography variant="subtitle1">End Date: {new Date(campaign.endDate).toLocaleDateString()}</Typography>
         )}
       </Box>
+      <br/>
+      <Box sx={{
+      width: '100%',
+      marginTop: 1,
+      backgroundColor: '#f0f0f0', // Light background color for the Box
+      padding: 2, // Optional: Add padding for spacing
+      borderRadius: 4, // Optional: Add rounded corners to the Box
+    }}>
       <ProgressIndicator current={campaign.currentAmount} goal={campaign.goalAmount} />
-      <Box sx={{ marginTop: 2 }}>
-        <Button variant="contained" color="primary">
+      </Box>
+      
+      <Box sx={{ marginTop: 2, display: 'flex', justifyContent: 'center',}}>
+      
+        <Button variant="contained" color="primary" sx={{ marginTop:2 }}>
+        
           Donate Now
         </Button>
       </Box>
