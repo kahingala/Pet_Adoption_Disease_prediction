@@ -1,0 +1,6 @@
+sonar.projectKey=Pet_Adoption_Disease_prediction
+sonar.projectName=Pet_Adoption_Disease_prediction
+sonar.projectVersion=1.0
+sonar.sources=.
+sonar.host.url=http://localhost:9000
+sonar.login=sqp_e50365bc3968cab9652e78f922592daee70de137
