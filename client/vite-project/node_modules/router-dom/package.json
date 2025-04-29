@@ -1,0 +1,43 @@
+{
+  "name": "router-dom",
+  "version": "3.0.3",
+  "description": "A lightweight router for everyone",
+  "type": "module",
+  "main": "dist/router.js",
+  "module": "dist/router.js",
+  "types": "./dist/router.d.ts",
+  "exports": {
+    "import": "./dist/router.js",
+    "default": "./dist/router.js"
+  },
+  "keywords": [
+    "router",
+    "routing",
+    "javascript",
+    "history",
+    "link"
+  ],
+  "scripts": {
+    "start": "tsc",
+    "update": "npx npm-check-updates -u && npx typesync && npm i && npm outdated",
+    "test": "tsc && wtr src/tests/*.html --node-resolve --playwright --browsers chromium firefox webkit"
+  },
+  "author": "Fabian Klingenberg <klingenberg.fabian@gmx.de> (https://klingenberg.netlify.app/)",
+  "license": "MIT",
+  "devDependencies": {
+    "@esm-bundle/chai": "^4.3.4",
+    "@web/test-runner": "^0.20.0",
+    "@web/test-runner-playwright": "^0.11.0",
+    "esbuild": "^0.25.0",
+    "typescript": "^5.7.3"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Krutsch/router-dom.git"
+  },
+  "bugs": "https://github.com/Krutsch/router-dom/issues",
+  "dependencies": {
+    "hydro-js": "^1.5.22",
+    "path-to-regexp": "6.3.0"
+  }
+}
