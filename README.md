@@ -1,12 +1,63 @@
-# React + Vite
+# 🐾 Pet_Adoption_Disease_Prediction System
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A full-featured web application designed to simplify pet adoption, encourage donations, and use AI/ML to predict diseases in pets based on symptoms. This system includes modules for shop management, pet adoption, donation management, and disease prediction.
 
-Currently, two official plugins are available:
+---
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## 🚀 Features
 
-## Expanding the ESLint configuration
+### 🐶 Pet Adoption
+- Browse adoptable pets with filters
+- Request adoption through secure forms
+- Admin panel for managing pet listings
 
-If you are developing a production application, we recommend using TypeScript and enable type-aware lint rules. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+### 🧠 Disease Prediction
+- Enter pet symptoms to get AI/ML-based disease predictions
+- Uses pre-trained ML model
+- Visual feedback for disease likelihood and suggestions
+
+### 💸 Donation Management
+- Secure donation form for animal welfare support
+- Payment integration
+- Admin view for donation history and analytics
+
+### 👤 User Management
+- User registration and login (JWT-based)
+- Role-based access (User/Admin)
+- User profile with adoption and donation history
+- Admin panel to manage user accounts
+
+
+---
+
+## 🛠️ Tech Stack
+
+### Frontend
+- **React.js** with Material UI / Bootstrap / CSS
+- **Axios** for API integration
+- **React Router** for navigation
+
+### Backend
+- **Node.js** (Javascript)
+- **RESTful APIs** with CRUD functionality
+- **JWT Authentication**
+
+### Database
+- **MongoDB Atlas** 
+
+
+### AI/ML
+- **Python** 
+- Trained model integrated
+
+---
+
+## 📁 Modules
+
+- `adoption/` – Pet listing & adoption flow
+- `donation/` – Donation form, payment gateway, admin analytics
+- `disease-prediction/` – ML model, symptom input, prediction result
+- `admin/` – Dashboard for managing all entities
+- `user/` – Authentication, profile, user role management
+---
+
