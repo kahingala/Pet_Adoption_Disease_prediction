@@ -61,6 +61,7 @@ const CampaignForm = ({ initialValues, onSubmit, isEdit }) => {
           'Content-Type': 'multipart/form-data',
         },
       });
+      console.log('Image url', response.data.imageUrl);
       setImageUrl(response.data.imageUrl);
       setFormData({ ...formData, images: [response.data.imageUrl] });
     } catch (error) {
@@ -89,7 +90,7 @@ const CampaignForm = ({ initialValues, onSubmit, isEdit }) => {
     }
 
     try {
-     
+  
      /* const url = isEdit ? `${API_BASE_URL}/api/campaigns/${id}` : `${API_BASE_URL}/api/campaigns`;
       const method = isEdit ? 'put' : 'post';
 
@@ -129,6 +130,9 @@ const CampaignForm = ({ initialValues, onSubmit, isEdit }) => {
       setLoading(false); // Stop loading
       
     }
+  };
+  const handleCancel = () => {
+    navigate('/campaignlist'); // Go back to the campaign list or your desired route
   };
 
   const categories = [
@@ -254,6 +258,9 @@ const CampaignForm = ({ initialValues, onSubmit, isEdit }) => {
         {isEdit ? 'Update Campaign' : 'Create Campaign'}
       </Button>
       {loading && <CircularProgress />}
+      <Button variant="outlined" onClick={handleCancel} sx={{ marginTop: 2, marginLeft:5 }}>
+          Cancel
+        </Button>
     </Box>
   );
 };
