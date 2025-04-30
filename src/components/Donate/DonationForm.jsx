@@ -19,7 +19,7 @@ const DonationForm = () => {
   return (
     <Box component={motion.div} whileHover={{ scale: 1.02 }} transition={{ duration: 0.3 }} 
       sx={{ p: 3, mb: 4, boxShadow: 5, borderRadius: 3, background: "#FFF3E0" }}>
-      <Typography variant="h5" sx={{ fontWeight: "bold", mb: 2 }}>Donate Now</Typography>
+      <Typography variant="h5" sx={{ fontWeight: "bold", mb: 2, color:"brown" }}>Donate Now</Typography>
       <TextField fullWidth label="Your Name" name="name" value={donation.name} onChange={handleChange} sx={{ mb: 2 }} />
       <TextField fullWidth label="Amount ($)" name="amount" type="number" value={donation.amount} onChange={handleChange} sx={{ mb: 2 }} />
       <TextField fullWidth select label="Select Campaign" name="campaign" value={donation.campaign} onChange={handleChange} sx={{ mb: 2 }}>
