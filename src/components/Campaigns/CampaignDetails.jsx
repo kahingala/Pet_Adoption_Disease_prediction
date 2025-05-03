@@ -1,12 +1,13 @@
 // src/components/CampaignDetails.js
 import React, { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, Link } from 'react-router-dom';
 import { Typography, Box, Card, CardContent, CardMedia, Button } from '@mui/material';
 import axios from 'axios';
 import ProgressIndicator from './ProgressIndicator';
 import { API_BASE_URL } from '../../api'; // Assuming you'll have this
 
 const CampaignDetails = () => {
+ 
   const { id } = useParams();
   const [campaign, setCampaign] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -16,6 +17,7 @@ const CampaignDetails = () => {
     const fetchCampaign = async () => {
       try {
         const response = await axios.get(`${API_BASE_URL}/api/campaigns/${id}`);
+        console.log(response);
         setCampaign(response.data);
         setLoading(false);
       } catch (err) {
@@ -71,7 +73,7 @@ const CampaignDetails = () => {
       
       <Box sx={{ marginTop: 2, display: 'flex', justifyContent: 'center',}}>
       
-        <Button variant="contained" color="primary" sx={{ marginTop:2 }}>
+        <Button component={Link} to={`/d-form/${campaign._id}`} variant="contained" color="primary" sx={{ marginTop:2 }}>
         
           Donate Now
         </Button>

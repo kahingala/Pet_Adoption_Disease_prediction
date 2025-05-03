@@ -25,6 +25,7 @@ function App() {
         <Route path="/top-donors" element={<TopDonors />}/>
         <Route path="/d-history" element={<DonationHistory />}/>
         <Route path="/d-form" element={<DonationForm />}/>
+        <Route path="/d-form/:campaignId" element={<DonationForm />} />
 
         <Route path="/campaignlist" element={<CampaignList />} />
           <Route path="/campaigns/:id" element={<CampaignDetails />} />
