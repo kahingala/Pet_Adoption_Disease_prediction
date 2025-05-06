@@ -11,6 +11,7 @@ import CampaignDetails from './components/Campaigns/CampaignDetails';
 import AdminDashboard from './components/AdminDashboard';
 import CampaignForm from './components/Campaigns/CampaignForm';
 import EditCampaign from './components/Campaigns/EditCampaign';
+import MyDonations from "./components/Donate/MyDonations";
 
 
 function App() {
@@ -26,6 +27,8 @@ function App() {
         <Route path="/d-history" element={<DonationHistory />}/>
         <Route path="/d-form" element={<DonationForm />}/>
         <Route path="/d-form/:campaignId" element={<DonationForm />} />
+        <Route path="/my-donations/:userName" element={<MyDonations />} />
+
 
         <Route path="/campaignlist" element={<CampaignList />} />
           <Route path="/campaigns/:id" element={<CampaignDetails />} />

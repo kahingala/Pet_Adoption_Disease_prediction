@@ -7,10 +7,10 @@ const { v4: uuidv4 } = require('uuid');
 // Create a new donation
 exports.createDonation = async (req, res) => {
   try {
-    const { campaignId, amount, paymentMethod, userId } = req.body;
+    const { campaignId, amount, paymentMethod, userId, name } = req.body;
 
     // Basic validation
-    if (!campaignId || !amount || isNaN(amount) || amount <= 0) {
+    if (!campaignId || !amount || isNaN(amount) || amount <= 0  || !name) {
       return res.status(400).json({ message: 'Please provide a valid campaignId and a positive donation amount.' });
     }
 
@@ -26,11 +26,12 @@ exports.createDonation = async (req, res) => {
       amount,
       paymentMethod,
       transactionId,
+      name,
     });
 
     // Update campaign's current amount
     if (campaign.currentAmount+ amount >= campaign.goalAmount){
-      res.status(200).json({ message: 'Donation successful! Campaign goal reached!', donation: savedDonation });
+      res.status(200).json({ message: 'Donation successful! Campaign goal reached!', donation: newDonation });
                }else{
                 campaign.currentAmount += amount;
                 await campaign.save();
@@ -39,9 +40,9 @@ exports.createDonation = async (req, res) => {
     
 
     // Optionally, associate donation with user's history
-    if (userId) {
-      await User.findByIdAndUpdate(userId, { $push: { donationHistory: newDonation._id } });
-    }
+  //  if (userId) {
+   //   await User.findByIdAndUpdate(userId, { $push: { donationHistory: newDonation._id } });
+   // }
 
     res.status(201).json({ message: 'Donation successful', donation: newDonation });
   } catch (error) {
@@ -89,3 +90,20 @@ exports.getAllDonationsAdmin = async (req, res) => {
     res.status(500).json({ message: 'Server error fetching all donations.' });
   }
 };
+
+exports.getUserDonationHistory = async (req, res) => {
+  try {
+    const { userName } = req.params; // Get the userName from the URL
+
+    // Find all donations for the userName, sorted by donationDate descending
+    const donations = await Donation.find({ name: userName })
+      .populate('campaignId')
+      .sort({ donationDate: -1 });
+
+    res.status(200).json(donations);
+  } catch (error) {
+    console.error('Error fetching user donations:', error);
+    res.status(500).json({ message: 'Failed to fetch donations.', error: error.message });
+  }
+
+}
