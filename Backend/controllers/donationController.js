@@ -54,17 +54,12 @@ exports.createDonation = async (req, res) => {
   }
 };
 
-// Get donation history for a user (Authenticated)
+// Get donation history for all users (Authenticated)
 exports.getDonationHistory = async (req, res) => {
   try {
-    const userId = req.query.userId; // Assuming userId is passed as a query parameter
-
-    if (!userId) {
-      return res.status(400).json({ message: 'Please provide userId to view donation history.' });
-    }
-
-    const donations = await Donation.find({ userId })
-      .populate('campaignId', 'title') // Populate only the title of the campaign
+    
+    const donations = await Donation.find()
+      .populate('campaignId') // Populate only the title of the campaign
       .sort({ donationDate: -1 });
 
     res.json(donations);
