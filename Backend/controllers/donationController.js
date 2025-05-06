@@ -107,3 +107,26 @@ exports.getUserDonationHistory = async (req, res) => {
   }
 
 }
+
+exports.getTotalDonations = async (req, res) => {
+  try {
+    // Use aggregation to group donations by userName and sum the amounts
+    const totals = await Donation.aggregate([
+      {
+        $group: {
+          _id: '$name', // Group by userName
+          totalAmount: { $sum: '$amount' }, // Calculate the sum of amount
+          count: { $sum: 1 } //count the number of donations
+        },
+      },
+      {
+        $sort: { totalAmount: -1 }, // Sort in descending order of totalAmount
+      },
+    ]);
+
+    res.status(200).json(totals);
+  } catch (error) {
+    console.error('Error fetching donation totals:', error);
+    res.status(500).json({ message: 'Failed to fetch donation totals.', error: error.message });
+  }
+}
