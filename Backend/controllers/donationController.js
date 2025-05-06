@@ -2,11 +2,12 @@
 const Donation = require('../models/donation');
 const Campaign = require('../models/campaign');
 const User = require('../models/user');
+const { v4: uuidv4 } = require('uuid');
 
 // Create a new donation
 exports.createDonation = async (req, res) => {
   try {
-    const { campaignId, amount, paymentMethod, transactionId, userId } = req.body;
+    const { campaignId, amount, paymentMethod, userId } = req.body;
 
     // Basic validation
     if (!campaignId || !amount || isNaN(amount) || amount <= 0) {
@@ -17,6 +18,7 @@ exports.createDonation = async (req, res) => {
     if (!campaign) {
       return res.status(404).json({ message: 'Campaign not found.' });
     }
+    const transactionId = uuidv4();
 
     const newDonation = await Donation.create({
       campaignId,
@@ -27,8 +29,14 @@ exports.createDonation = async (req, res) => {
     });
 
     // Update campaign's current amount
-    campaign.currentAmount += amount;
-    await campaign.save();
+    if (campaign.currentAmount+ amount >= campaign.goalAmount){
+      res.status(200).json({ message: 'Donation successful! Campaign goal reached!', donation: savedDonation });
+               }else{
+                campaign.currentAmount += amount;
+                await campaign.save();
+
+               }
+    
 
     // Optionally, associate donation with user's history
     if (userId) {
