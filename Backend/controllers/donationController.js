@@ -125,3 +125,45 @@ exports.getTotalDonations = async (req, res) => {
     res.status(500).json({ message: 'Failed to fetch donation totals.', error: error.message });
   }
 }
+
+exports.getSortedDonationHistory = async (req, res) => {
+  try {
+    const donations = await Donation.aggregate([
+      {
+        $lookup: {
+          from: 'campaigns',
+          localField: 'campaignId',
+          foreignField: '_id',
+          as: 'campaign',
+        },
+      },
+      {
+        $unwind: '$campaign',
+      },
+      
+        
+      {
+        $group: {
+          _id: {
+            campaignName: '$campaign.title',
+            campaignCategory: '$campaign.category', // Group by category
+          },
+          donations: { $push: '$$ROOT' },
+          totalAmount: { $sum: '$amount' },
+          totalCount: { $sum: 1 }
+        },
+      },
+      {
+        $sort: { '_id.campaignName': 1, '_id.campaignCategory': 1 }, // Sort by name, then category
+      },
+    ]).exec();
+
+    res.json(donations);
+  } catch (error) {
+    console.error('Error fetching donation history:', error);
+    res.status(500).json({
+      message: 'Server error fetching donation history.',
+      error: error.message,
+    });
+  }
+}

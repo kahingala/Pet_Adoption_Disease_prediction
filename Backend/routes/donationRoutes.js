@@ -9,5 +9,6 @@ router.get('/history', donationController.getDonationHistory); // Protected
 router.get('/admin', donationController.getAllDonationsAdmin); // Admin route (unprotected for now)
 router.get('/my-donations/:userName',donationController.getUserDonationHistory);
 router.get('/totals',donationController.getTotalDonations);
+router.get('/sorted',donationController.getSortedDonationHistory);
 
 module.exports = router;
