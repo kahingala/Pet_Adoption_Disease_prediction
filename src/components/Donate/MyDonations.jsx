@@ -1,56 +1,49 @@
 import React, { useState, useEffect } from 'react';
-import { Box, Typography, Card, CardContent, CircularProgress } from '@mui/material';
+import { Box, Typography, Card, CardContent } from '@mui/material';
 import axios from 'axios';
-import { API_BASE_URL } from '../../api'; // Adjust the path if needed
+import { API_BASE_URL } from '../../api';
 import { format } from 'date-fns';
-import { Alert } from '@mui/material';
+import { useParams } from 'react-router-dom'; // Import useParams
 
-const DonationHistory = () => {
+const MyDonations = () => {
   const [donations, setDonations] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const { userName } = useParams(); // Get userName from URL
 
   useEffect(() => {
-    const fetchDonationHistory = async () => {
+    const fetchMyDonations = async () => {
       try {
-        const response = await axios.get(`${API_BASE_URL}/api/donations/history`); // Use the correct endpoint
+        const response = await axios.get(`${API_BASE_URL}/api/donations/my-donations/${userName}`); // Use userName
         setDonations(response.data);
         setLoading(false);
-      } catch (err) {
-        setError(err.response?.data?.message || 'Failed to fetch donation history.');
+      } catch (error) {
+        console.error('Error fetching donations:', error);
+        setError(error.message || 'Failed to fetch donations.');
         setLoading(false);
       }
     };
 
-    fetchDonationHistory();
-  }, []);
+    fetchMyDonations();
+  }, [userName]); // Depend on userName
 
   if (loading) {
-    return (
-      <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '200px' }}>
-        <CircularProgress />
-        <Typography sx={{ ml: 2 }}>Loading Donation History...</Typography>
-      </Box>
-    );
+    return <Typography>Loading your donation history...</Typography>;
   }
 
   if (error) {
-    return (
-      <Alert severity="error">
-        {error}
-      </Alert>
-    );
+    return <Typography color="error">Error: {error}</Typography>;
   }
 
-  if (!donations || donations.length === 0) {
-    return (
-      <Typography sx={{ textAlign: 'center', py: 2 }}>No donations found in history.</Typography>
-    );
+  if (donations.length === 0) {
+    return <Typography>No donations found for user: {userName}</Typography>;
   }
 
   return (
     <Box sx={{ padding: 3 }}>
-      <Typography variant="h4" sx={{ mb: 4, textAlign: 'center' }}>Donation History</Typography>
+      <Typography variant="h4" sx={{ mb: 4, textAlign: 'center' }}>
+        Donations done User: {userName}
+      </Typography>
       {donations.map((donation) => (
         <Card key={donation._id} sx={{ mb: 2, boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)' }}>
           <CardContent>
@@ -63,9 +56,6 @@ const DonationHistory = () => {
             <Typography>
               Amount: ${donation.amount}
             </Typography>
-             <Typography>
-              Name: {donation.name}
-            </Typography>
             <Typography>
               Date: {format(new Date(donation.donationDate), 'PPPppp')}
             </Typography>
@@ -77,4 +67,4 @@ const DonationHistory = () => {
   );
 };
 
-export default DonationHistory;
+export default MyDonations;
