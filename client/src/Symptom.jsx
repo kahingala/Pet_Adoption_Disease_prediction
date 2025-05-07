@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.min.css";
+import axios from "axios";
 
 function Symptom() {
     const navigate = useNavigate();
@@ -20,6 +21,7 @@ function Symptom() {
     });
 
     const [errors, setErrors] = useState({});
+    const [serverError, setServerError] = useState("");
 
     const symptoms = [
         "Select Symptom",
@@ -46,19 +48,19 @@ function Symptom() {
         let newValue = value;
         let errorMessage = "";
 
-        // Validation for Animal Type, Breed, and Gender (Only letters and spaces allowed)
+        // Validation for Animal Type, Breed, and Gender
         if (["animalType", "breed", "gender"].includes(name)) {
             if (!/^[a-zA-Z\s]*$/.test(value)) {
                 errorMessage = `${name} should only contain letters and spaces!`;
-                newValue = value.replace(/[^a-zA-Z\s]/g, ""); // Remove invalid characters
+                newValue = value.replace(/[^a-zA-Z\s]/g, "");
             }
         }
 
-        // Validation for fields that should only allow numbers
+        // Validation for numeric fields
         if (["weight", "bodyTemperature", "heartRate", "duration"].includes(name)) {
             if (!/^\d*$/.test(value)) {
                 errorMessage = `${name} must be a valid integer!`;
-                newValue = value.replace(/\D/g, ""); // Remove non-numeric characters
+                newValue = value.replace(/\D/g, "");
             }
         }
 
@@ -71,10 +73,18 @@ function Symptom() {
                Object.values(formData).every(value => value.trim() !== "");
     };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        if (isFormValid()) {
-            navigate("/disease");
+
+        if (!isFormValid()) return;
+
+        try {
+            const response = await axios.post("http://localhost:3001/disease", formData);
+            console.log("Prediction Result:", response.data);
+            navigate("/disease", { state: { prediction: response.data } });
+        } catch (error) {
+            console.error("Error submitting form:", error);
+            setServerError("Something went wrong. Please try again later.");
         }
     };
 
@@ -83,6 +93,9 @@ function Symptom() {
             <h2 className="mb-3 text-center text-white">
                 Worried About Your Pet? Get Quick Health Advice Now!
             </h2>
+            {serverError && (
+                <div className="alert alert-danger text-center">{serverError}</div>
+            )}
             <form onSubmit={handleSubmit}>
                 <div className="row">
                     <div className="col-md-6">
@@ -161,6 +174,5 @@ const renderDropdown = (label, name, formData, handleChange, errors, options) =>
         </div>
     );
 };
-
 
 export default Symptom;
