@@ -10,6 +10,7 @@ function Symptom() {
         animalType: "",
         breed: "",
         gender: "",
+        age: "",
         weight: "",
         symptom1: "",
         symptom2: "",
@@ -48,7 +49,6 @@ function Symptom() {
         let newValue = value;
         let errorMessage = "";
 
-        // Validation for Animal Type, Breed, and Gender
         if (["animalType", "breed", "gender"].includes(name)) {
             if (!/^[a-zA-Z\s]*$/.test(value)) {
                 errorMessage = `${name} should only contain letters and spaces!`;
@@ -56,8 +56,7 @@ function Symptom() {
             }
         }
 
-        // Validation for numeric fields
-        if (["weight", "bodyTemperature", "heartRate", "duration"].includes(name)) {
+        if (["weight", "bodyTemperature", "heartRate", "duration", "age"].includes(name)) {
             if (!/^\d*$/.test(value)) {
                 errorMessage = `${name} must be a valid integer!`;
                 newValue = value.replace(/\D/g, "");
@@ -76,15 +75,28 @@ function Symptom() {
     const handleSubmit = async (e) => {
         e.preventDefault();
 
-        if (!isFormValid()) return;
+        if (!isFormValid()) {
+            setServerError("Please fill all fields correctly before submitting.");
+            return;
+        }
 
         try {
             const response = await axios.post("http://localhost:3001/disease", formData);
-            console.log("Prediction Result:", response.data);
-            navigate("/disease", { state: { prediction: response.data } });
+
+            if (response?.data?.prediction) {
+                setServerError("");
+                navigate("/disease", {
+                    state: {
+                        prediction: response.data.prediction,
+                        animalType: formData.animalType
+                    }
+                });
+            } else {
+                setServerError("Prediction failed. Please try again.");
+            }
         } catch (error) {
-            console.error("Error submitting form:", error);
-            setServerError("Something went wrong. Please try again later.");
+            console.error("Error during prediction:", error);
+            setServerError("Something went wrong while predicting the disease.");
         }
     };
 
@@ -102,6 +114,7 @@ function Symptom() {
                         {renderInput("Animal Type", "animalType", formData, handleChange, errors)}
                         {renderInput("Breed", "breed", formData, handleChange, errors)}
                         {renderInput("Gender", "gender", formData, handleChange, errors)}
+                        {renderInput("Age", "age", formData, handleChange, errors)}
                         {renderInput("Weight", "weight", formData, handleChange, errors)}
                         {renderInput("Body Temperature", "bodyTemperature", formData, handleChange, errors)}
                         {renderInput("Heart Rate", "heartRate", formData, handleChange, errors)}
@@ -126,7 +139,6 @@ function Symptom() {
     );
 }
 
-// Reusable input field with validation
 const renderInput = (label, name, formData, handleChange, errors) => {
     return (
         <div className="mb-3">
@@ -149,7 +161,6 @@ const renderInput = (label, name, formData, handleChange, errors) => {
     );
 };
 
-// Reusable dropdown field with validation
 const renderDropdown = (label, name, formData, handleChange, errors, options) => {
     return (
         <div className="mb-3">
