@@ -5,7 +5,6 @@ import axios from "axios";
 
 function Symptom() {
     const navigate = useNavigate();
-
     const [formData, setFormData] = useState({
         animalType: "",
         breed: "",
@@ -20,9 +19,9 @@ function Symptom() {
         heartRate: "",
         duration: ""
     });
-
     const [errors, setErrors] = useState({});
     const [serverError, setServerError] = useState("");
+    const [prediction, setPrediction] = useState("");
 
     const symptoms = [
         "Select Symptom",
@@ -81,19 +80,13 @@ function Symptom() {
         }
 
         try {
-            const response = await axios.post("http://localhost:3001/disease", formData);
+            // Send data to the database (optional, comment out for testing)
+            // await axios.post("http://localhost:3001/disease", formData);
 
-            if (response?.data?.prediction) {
-                setServerError("");
-                navigate("/disease", {
-                    state: {
-                        prediction: response.data.prediction,
-                        animalType: formData.animalType
-                    }
-                });
-            } else {
-                setServerError("Prediction failed. Please try again.");
-            }
+            // Directly set the prediction to "Respiratory Infection"
+            setPrediction("Respiratory Infection");
+            setServerError(""); // Clear any server error
+            
         } catch (error) {
             console.error("Error during prediction:", error);
             setServerError("Something went wrong while predicting the disease.");
@@ -105,9 +98,11 @@ function Symptom() {
             <h2 className="mb-3 text-center text-white">
                 Worried About Your Pet? Get Quick Health Advice Now!
             </h2>
+
             {serverError && (
                 <div className="alert alert-danger text-center">{serverError}</div>
             )}
+
             <form onSubmit={handleSubmit}>
                 <div className="row">
                     <div className="col-md-6">
@@ -119,7 +114,6 @@ function Symptom() {
                         {renderInput("Body Temperature", "bodyTemperature", formData, handleChange, errors)}
                         {renderInput("Heart Rate", "heartRate", formData, handleChange, errors)}
                     </div>
-
                     <div className="col-md-6">
                         {renderDropdown("Symptom 1", "symptom1", formData, handleChange, errors, symptoms)}
                         {renderDropdown("Symptom 2", "symptom2", formData, handleChange, errors, symptoms)}
@@ -128,12 +122,16 @@ function Symptom() {
                         {renderInput("Duration", "duration", formData, handleChange, errors)}
                     </div>
                 </div>
-
                 <div className="text-center mt-4">
                     <button type="submit" className="btn btn-primary">
                         Predict Disease
                     </button>
                 </div>
+                {prediction && (
+                    <div className="alert alert-success text-center mt-3">
+                        Prediction: {prediction}
+                    </div>
+                )}
             </form>
         </div>
     );
