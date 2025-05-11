@@ -43,19 +43,63 @@ function Symptom() {
         "Excessive thirst"
     ];
 
+    const genderOptions = [
+        "Select Gender",
+        "Male",
+        "Female"
+    ];
+
+    const validAnimalTypes = [
+        "dog",
+        "cat",
+        "cow",
+        "horse",
+        "pig",
+        "sheep",
+        "rabbit",
+        "goat"
+    ];
+
     const handleChange = (e) => {
         const { name, value } = e.target;
         let newValue = value;
         let errorMessage = "";
 
-        if (["animalType", "breed", "gender"].includes(name)) {
+        if (name === "animalType") {
+            if (!/^[a-zA-Z\s]*$/.test(value)) {
+                errorMessage = `${name} should only contain letters and spaces!`;
+                newValue = value.replace(/[^a-zA-Z\s]/g, "");
+            }
+            if (newValue.trim() !== "" && !validAnimalTypes.includes(newValue.toLowerCase().trim())) {
+                errorMessage = "Invalid Animal Type.";
+            }
+        }
+
+        if (name === "breed") {
             if (!/^[a-zA-Z\s]*$/.test(value)) {
                 errorMessage = `${name} should only contain letters and spaces!`;
                 newValue = value.replace(/[^a-zA-Z\s]/g, "");
             }
         }
 
-        if (["weight", "bodyTemperature", "heartRate", "duration", "age"].includes(name)) {
+        if (name === "gender" && value === "Select Gender") {
+            errorMessage = "Please select a valid gender!";
+            newValue = "";
+        }
+
+        if (["weight", "bodyTemperature"].includes(name)) {
+            if (!/^\d*\.?\d*$/.test(value)) {
+                errorMessage = `${name} must be a valid number!`;
+                newValue = value.replace(/[^0-9.]/g, "");
+                // Ensure only one decimal point
+                const decimalCount = newValue.split(".").length - 1;
+                if (decimalCount > 1) {
+                    newValue = newValue.slice(0, newValue.lastIndexOf("."));
+                }
+            }
+        }
+
+        if (["heartRate", "duration", "age"].includes(name)) {
             if (!/^\d*$/.test(value)) {
                 errorMessage = `${name} must be a valid integer!`;
                 newValue = value.replace(/\D/g, "");
@@ -80,11 +124,53 @@ function Symptom() {
         }
 
         try {
-            // Send data to the database (optional, comment out for testing)
-            // await axios.post("http://localhost:3001/disease", formData);
+            // Check for specific symptoms
+            const selectedSymptoms = [
+                formData.symptom1,
+                formData.symptom2,
+                formData.symptom3,
+                formData.symptom4
+            ];
 
-            // Directly set the prediction to "Respiratory Infection"
-            setPrediction("Respiratory Infection");
+            // Check for Pig-specific condition
+            if (formData.animalType.toLowerCase() === "pig") {
+                setPrediction("Swine Diseases");
+            }
+            // Check for specific symptom combinations
+            else {
+                const viralSymptoms = ["Fever", "Nasal discharge", "Labored breathing", "Coughing"];
+                const hasViralSymptoms = viralSymptoms.every(symptom => 
+                    selectedSymptoms.includes(symptom)
+                );
+
+                const fungalSymptoms = ["Lethargy", "Loss of appetite", "Skin Lesions"];
+                const hasFungalSymptoms = fungalSymptoms.every(symptom => 
+                    selectedSymptoms.includes(symptom)
+                );
+
+                const gastroSymptoms = ["Diarrhea", "Vomiting", "Lethargy", "Loss of appetite"];
+                const hasGastroSymptoms = gastroSymptoms.every(symptom => 
+                    selectedSymptoms.includes(symptom)
+                );
+
+                const respiratorySymptoms = ["Coughing", "Sneezing", "Eye discharge", "Nasal discharge"];
+                const hasRespiratorySymptoms = respiratorySymptoms.every(symptom => 
+                    selectedSymptoms.includes(symptom)
+                );
+
+                if (hasViralSymptoms) {
+                    setPrediction("Viral Infection");
+                } else if (hasFungalSymptoms) {
+                    setPrediction("Fungal and Skin Infection");
+                } else if (hasGastroSymptoms) {
+                    setPrediction("Gastrointestinal Diseases");
+                } else if (hasRespiratorySymptoms) {
+                    setPrediction("Respiratory Infection");
+                } else {
+                    // Default prediction for all other cases
+                    setPrediction("Viral Infection");
+                }
+            }
             setServerError(""); // Clear any server error
             
         } catch (error) {
@@ -108,10 +194,10 @@ function Symptom() {
                     <div className="col-md-6">
                         {renderInput("Animal Type", "animalType", formData, handleChange, errors)}
                         {renderInput("Breed", "breed", formData, handleChange, errors)}
-                        {renderInput("Gender", "gender", formData, handleChange, errors)}
+                        {renderDropdown("Gender", "gender", formData, handleChange, errors, genderOptions)}
                         {renderInput("Age", "age", formData, handleChange, errors)}
-                        {renderInput("Weight", "weight", formData, handleChange, errors)}
-                        {renderInput("Body Temperature", "bodyTemperature", formData, handleChange, errors)}
+                        {renderInput("Weight(kg)", "weight", formData, handleChange, errors)}
+                        {renderInput("Body Temperature(c)", "bodyTemperature", formData, handleChange, errors)}
                         {renderInput("Heart Rate", "heartRate", formData, handleChange, errors)}
                     </div>
                     <div className="col-md-6">
@@ -119,7 +205,7 @@ function Symptom() {
                         {renderDropdown("Symptom 2", "symptom2", formData, handleChange, errors, symptoms)}
                         {renderDropdown("Symptom 3", "symptom3", formData, handleChange, errors, symptoms)}
                         {renderDropdown("Symptom 4", "symptom4", formData, handleChange, errors, symptoms)}
-                        {renderInput("Duration", "duration", formData, handleChange, errors)}
+                        {renderInput("Duration(Days)", "duration", formData, handleChange, errors)}
                     </div>
                 </div>
                 <div className="text-center mt-4">
