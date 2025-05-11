@@ -4,12 +4,72 @@ import axios from 'axios';
 import { API_BASE_URL } from '../../api';
 import { jsPDF } from 'jspdf';
 import html2canvas from 'html2canvas';
+import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper } from '@mui/material';
+import { createTheme, ThemeProvider } from '@mui/material/styles';
+import { blue, green, grey } from '@mui/material/colors';
+
+// Define a custom theme
+const theme = createTheme({
+  palette: {
+    primary: blue,
+    secondary: green,
+    background: {
+      default: grey[100], // Light background
+    },
+  },
+  typography: {
+    h4: {
+      fontWeight: 600, // Make heading bold
+      color: blue[800], // Darker blue
+    },
+    h6: {
+      fontWeight: 500,
+      color: green[700],
+    },
+  },
+  components: {
+    MuiTableCell: {
+      styleOverrides: {
+        head: {
+          backgroundColor: blue[100], // Light blue header
+          color: blue[800],         // Dark blue text
+          fontWeight: 'bold',
+        },
+        body: {
+          color: grey[800],       // Darker grey text
+        },
+      },
+    },
+    MuiCard: {
+      styleOverrides: {
+        root: {
+          boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)', // Slightly stronger shadow
+          borderRadius: 8,            // Rounded corners
+          transition: 'transform 0.2s ease-in-out', // Smooth transition
+          '&:hover': {
+            transform: 'scale(1.02)', // Slight scale on hover
+          },
+        },
+      },
+    },
+    MuiPaper: {
+        styleOverrides: {
+            root: {
+                borderRadius: 8,
+                boxShadow: '0 4px 8px rgba(0,0,0,0.1)'
+            }
+        }
+    }
+  },
+});
 
 const DonationTotals = () => {
   const [totals, setTotals] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const reportRef = useRef(null); 
+
+  
 
   useEffect(() => {
     const fetchDonationTotals = async () => {
@@ -64,29 +124,38 @@ const DonationTotals = () => {
   }
 
   return (
+    <ThemeProvider theme={theme}>
     <Box sx={{ padding: 3 }}>
       <Typography variant="h4" sx={{ mb: 4, textAlign: 'center' }}>Donation Totals by User</Typography>
       <div ref={reportRef}>
-      {totals.map((userTotal) => (
-        <Card key={userTotal._id} sx={{ mb: 2, boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)' }}>
-          <CardContent>
-            <Typography variant="h6" fontWeight="bold">
-              User: {userTotal._id}
-            </Typography>
-            <Typography>
-              Total Amount: ${userTotal.totalAmount}
-            </Typography>
-             <Typography>
-              Number of Donations: {userTotal.count}
-            </Typography>
-          </CardContent>
-        </Card>
-      ))}
+        <TableContainer component={Paper}>
+          <Table>
+            <TableHead>
+              <TableRow>
+                <TableCell>User</TableCell>
+                <TableCell align="right">Total Amount</TableCell>
+                <TableCell align="right">Number of Donations</TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {totals.map((userTotal) => (
+                <TableRow key={userTotal._id}>
+                  <TableCell component="th" scope="row">
+                    {userTotal._id}
+                  </TableCell>
+                  <TableCell align="right">${userTotal.totalAmount.toFixed(2)}</TableCell>
+                  <TableCell align="right">{userTotal.count}</TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </TableContainer>
       </div>
-      <Button onClick={generatePdf} variant="contained" sx={{ mt: 2 }}>
+      <Button onClick={generatePdf} variant="contained" color="primary" sx={{ mt: 4 }}>
         Download PDF Report
       </Button>
     </Box>
+  </ThemeProvider>
   );
 };
 

@@ -22,7 +22,7 @@ const Header = () => {
           PetCare
         </Typography>
         <Button color="inherit" component={Link} to="/">Home</Button>
-        <Button color="inherit" component={Link} to="/fundraising">Fundraising</Button>
+        <Button color="inherit" component={Link} to="/campaignlist">Fundraising</Button>
 
         {/* Desktop Navigation */}
         {!isMobile && (

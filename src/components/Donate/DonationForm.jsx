@@ -7,6 +7,8 @@ import { API_BASE_URL } from '../../api';
 import CampaignDetails from "../Campaigns/CampaignDetails";
 import CampaignCard from "../Campaigns/CampaignCard";
 import ProgressIndicator from "../Campaigns/ProgressIndicator";
+import { useNavigate } from 'react-router-dom';
+
 
 const campaigns = ["Medical Fund", "Vet Clinic", "Animal Shelter", "Food for Strays"];
 
@@ -19,6 +21,9 @@ const DonationForm = () => {
   const [amountError, setAmountError] = useState("");
   const [nameError, setNameError] = useState("");
  
+  const navigate = useNavigate();
+
+
   const fetchCampaign = async () => {
     try {
       const response = await axios.get(`${API_BASE_URL}/api/campaigns/${campaignId}`);
@@ -91,6 +96,7 @@ useEffect(() => {
       alert(`Thank you ${donation.name} for donating $${donation.amount} to ${donation.campaign}!  Your Transaction ID is: ${response.data.donation.transactionId}`);
       fetchCampaign();
       setDonation({ name: "", amount: "", campaign: campaignId || "" });
+      navigate('/campaignlist');
     } catch (error) {
       console.error('Error submitting donation:', error.response ? error.response.data : error.message);
       alert(error.response?.data?.message || 'Failed to submit donation. Please try again.');
