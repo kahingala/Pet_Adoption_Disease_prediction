@@ -2,14 +2,15 @@
 const Donation = require('../models/donation');
 const Campaign = require('../models/campaign');
 const User = require('../models/user');
+const { v4: uuidv4 } = require('uuid');
 
 // Create a new donation
 exports.createDonation = async (req, res) => {
   try {
-    const { campaignId, amount, paymentMethod, transactionId, userId } = req.body;
+    const { campaignId, amount, paymentMethod, userId, name } = req.body;
 
     // Basic validation
-    if (!campaignId || !amount || isNaN(amount) || amount <= 0) {
+    if (!campaignId || !amount || isNaN(amount) || amount <= 0  || !name) {
       return res.status(400).json({ message: 'Please provide a valid campaignId and a positive donation amount.' });
     }
 
@@ -17,6 +18,7 @@ exports.createDonation = async (req, res) => {
     if (!campaign) {
       return res.status(404).json({ message: 'Campaign not found.' });
     }
+    const transactionId = uuidv4();
 
     const newDonation = await Donation.create({
       campaignId,
@@ -24,16 +26,23 @@ exports.createDonation = async (req, res) => {
       amount,
       paymentMethod,
       transactionId,
+      name,
     });
 
     // Update campaign's current amount
-    campaign.currentAmount += amount;
-    await campaign.save();
+    if (campaign.currentAmount+ amount >= campaign.goalAmount){
+      res.status(200).json({ message: 'Donation successful! Campaign goal reached!', donation: newDonation });
+               }else{
+                campaign.currentAmount += amount;
+                await campaign.save();
+
+               }
+    
 
     // Optionally, associate donation with user's history
-    if (userId) {
-      await User.findByIdAndUpdate(userId, { $push: { donationHistory: newDonation._id } });
-    }
+  //  if (userId) {
+   //   await User.findByIdAndUpdate(userId, { $push: { donationHistory: newDonation._id } });
+   // }
 
     res.status(201).json({ message: 'Donation successful', donation: newDonation });
   } catch (error) {
@@ -45,17 +54,12 @@ exports.createDonation = async (req, res) => {
   }
 };
 
-// Get donation history for a user (Authenticated)
+// Get donation history for all users (Authenticated)
 exports.getDonationHistory = async (req, res) => {
   try {
-    const userId = req.query.userId; // Assuming userId is passed as a query parameter
-
-    if (!userId) {
-      return res.status(400).json({ message: 'Please provide userId to view donation history.' });
-    }
-
-    const donations = await Donation.find({ userId })
-      .populate('campaignId', 'title') // Populate only the title of the campaign
+    
+    const donations = await Donation.find()
+      .populate('campaignId') // Populate only the title of the campaign
       .sort({ donationDate: -1 });
 
     res.json(donations);
@@ -81,3 +85,86 @@ exports.getAllDonationsAdmin = async (req, res) => {
     res.status(500).json({ message: 'Server error fetching all donations.' });
   }
 };
+
+exports.getUserDonationHistory = async (req, res) => {
+  try {
+    const { userName } = req.params; // Get the userName from the URL
+
+    // Find all donations for the userName, sorted by donationDate descending
+    const donations = await Donation.find({ name: userName })
+      .populate('campaignId')
+      .sort({ donationDate: -1 });
+
+    res.status(200).json(donations);
+  } catch (error) {
+    console.error('Error fetching user donations:', error);
+    res.status(500).json({ message: 'Failed to fetch donations.', error: error.message });
+  }
+
+}
+
+exports.getTotalDonations = async (req, res) => {
+  try {
+    // Use aggregation to group donations by userName and sum the amounts
+    const totals = await Donation.aggregate([
+      {
+        $group: {
+          _id: '$name', // Group by userName
+          totalAmount: { $sum: '$amount' }, // Calculate the sum of amount
+          count: { $sum: 1 } //count the number of donations
+        },
+      },
+      {
+        $sort: { totalAmount: -1 }, // Sort in descending order of totalAmount
+      },
+    ]);
+
+    res.status(200).json(totals);
+  } catch (error) {
+    console.error('Error fetching donation totals:', error);
+    res.status(500).json({ message: 'Failed to fetch donation totals.', error: error.message });
+  }
+}
+
+exports.getSortedDonationHistory = async (req, res) => {
+  try {
+    const donations = await Donation.aggregate([
+      {
+        $lookup: {
+          from: 'campaigns',
+          localField: 'campaignId',
+          foreignField: '_id',
+          as: 'campaign',
+        },
+      },
+      {
+        $unwind: '$campaign',
+      },
+      
+        
+      {
+        $group: {
+          _id: {
+            campaignName: '$campaign.title',
+            campaignCategory: '$campaign.category', // Group by category
+          },
+          donations: { $push: '$$ROOT' },
+          totalAmount: { $sum: '$amount' },
+          totalCount: { $sum: 1 }
+        },
+      },
+      {
+        $sort: { '_id.campaignName': 1, '_id.campaignCategory': 1 }, // Sort by name, then category
+      },
+    ]).exec();
+
+    res.json(donations);
+  } catch (error) {
+    console.error('Error fetching donation history:', error);
+    res.status(500).json({
+      message: 'Server error fetching donation history.',
+      error: error.message,
+    });
+  }
+}
+

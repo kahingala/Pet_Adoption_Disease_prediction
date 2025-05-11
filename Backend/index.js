@@ -9,7 +9,9 @@ const donationRoutes = require('./routes/donationRoutes');
 //const userRoutes = require('./routes/userRoutes');
 //const adminRoutes = require('./routes/adminRoutes');
 const multer = require('multer');
+const nodemailer = require('nodemailer');
 const path = require('path');
+
 
 // Load environment variables
 //dotenv.config();
@@ -75,3 +77,41 @@ app.post('/api/upload', upload.single('image'), (req, res) => {
 
 // Serve static files from the 'uploads' directory
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+
+
+// Send email route
+/*app.post('/api/send-email', async (req, res) => {
+  const { email } = req.body;
+
+  try {
+    // Create transporter
+    const transporter = nodemailer.createTransport({
+      service: 'gmail',
+      auth: {
+        user: 'newpico001@gmail.com',
+        pass: 'biat echd xdsl mzog',
+      },
+      tls: {
+        
+        rejectUnauthorized: false,
+    },
+      debug: true,
+  logger: true
+    });
+
+    // Mail options
+    const mailOptions = {
+      from: "newpico001@gmail.com",
+      to: email,
+      subject: 'Welcome to our service!',
+      text: 'Thanks for signing up. We hope you enjoy your experience!',
+    };
+
+    // Send email
+    await transporter.sendMail(mailOptions);
+    res.status(200).json({ message: 'Email sent successfully' });
+  } catch (error) {
+    console.error('Email send error:', error);
+    res.status(500).json({ error: 'Failed to send email' });
+  }
+});*/

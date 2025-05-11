@@ -7,7 +7,9 @@ import { selectCampaigns, selectCampaignsLoading, selectCampaignsError } from '.
 import CampaignCard from './CampaignCard';
 import { motion } from "framer-motion";
 import { Add, Delete, Edit } from "@mui/icons-material";
+import HistoryToggleOffIcon from '@mui/icons-material/HistoryToggleOff';
 import { useNavigate } from 'react-router-dom';
+import CurrencyExchangeIcon from '@mui/icons-material/CurrencyExchange';
 
 const CampaignList = () => {
   const navigate = useNavigate();
@@ -40,6 +42,12 @@ const CampaignList = () => {
       </Grid>
       <Button variant="contained" onClick={()=>addNEWcampaign()} startIcon={<Add />} sx={{ mt: 4, background: "#4CAF50", color: "white" }}>
         Add New Campaign
+      </Button>
+      <Button variant="contained" onClick={()=> navigate(`/d-history`)} startIcon={<HistoryToggleOffIcon />} sx={{ mt: 4, background: "#4CAF50", color: "white", marginLeft:5 }}>
+        Donation History
+      </Button>
+      <Button variant="contained" onClick={()=> navigate(`/donations/totals`)} startIcon={<CurrencyExchangeIcon />} sx={{ mt: 4, background: "#4CAF50", color: "white", marginLeft:5 }}>
+        Total Donations by User
       </Button>
     </Container>
   );

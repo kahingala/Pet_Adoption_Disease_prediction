@@ -104,7 +104,7 @@ exports.updateCampaign = async (req, res) => {
 
     campaign.title = title || campaign.title;
     campaign.description = description || campaign.description;
-    //campaign.images = images || campaign.images;
+    campaign.images = images || campaign.images;
     campaign.goalAmount = goalAmount || campaign.goalAmount;
     campaign.startDate = startDate || campaign.startDate;
     campaign.endDate = endDate || campaign.endDate;
