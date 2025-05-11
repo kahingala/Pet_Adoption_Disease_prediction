@@ -82,6 +82,14 @@ const CampaignForm = ({ initialValues, onSubmit, isEdit }) => {
     if (!imageFile) {
       validationErrors.image = 'Image is required';
     }
+    if (formData.startDate && formData.endDate) { // Only check if both are present
+      const start = new Date(formData.startDate);
+      const end = new Date(formData.endDate);
+
+      if (start > end) {
+        validationErrors.endDate = 'End date must be after start date';
+      }
+    }
 
     if (Object.keys(validationErrors).length > 0) {
       setErrors(validationErrors);
@@ -213,6 +221,8 @@ const CampaignForm = ({ initialValues, onSubmit, isEdit }) => {
         fullWidth
         margin="normal"
         type="date"
+        error={!!errors.endDate}
+        helperText={errors.endDate}
         disabled={loading}
         sx={{
     '& label': {
