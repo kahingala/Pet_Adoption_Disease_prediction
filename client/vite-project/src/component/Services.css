@@ -1,0 +1,184 @@
+
+  /* Hero Section *//*
+  .hero-container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 50px;
+    background-color: #f8f8f8;
+  }
+  
+  .hero-content {
+    max-width: 500px;
+  }
+  
+  .hero-title {
+    font-size: 3rem;
+    font-weight: bold;
+    color: #333;
+  }
+  
+  .hero-description {
+    font-size: 1.2rem;
+    color: #010101;
+    margin: 20px 0;
+  }
+  
+  .cta-button {
+    padding: 12px 24px;
+    font-size: 1.2rem;
+    background-color: #ff6600;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background 0.3s;
+  }
+  
+  .cta-button:hover {
+    background-color: #e55b00;
+  }
+  
+  .hero-images {
+    position: relative;
+  }
+  
+  .hero-images img {
+    width: 200px;
+    height: 200px;
+    object-fit: cover;
+    border-radius: 10px;
+    box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.2);
+  }*/
+  /* Services Section */
+  .service-section {
+    text-align: center;
+    padding: 40px 20px;
+  }
+  
+  .service-heading {
+    font-size: 2rem;
+    font-weight: 700;
+    color: #222;
+  }
+  
+  .service-description {
+    font-size: 1rem;
+    max-width: 700px;
+    margin: 10px auto;
+    color: #555;
+  }
+  
+  /* Services Container */
+  .service-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 30px;
+    padding: 20px;
+  }
+  
+  /* Service Boxes */
+  .service-box {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 80%;
+    max-width: 1000px;
+    padding: 25px;
+    border-radius: 15px;
+    box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+  }
+  
+  .service-box:hover {
+    transform: translateY(-5px);
+    box-shadow: 0px 8px 20px rgba(0, 0, 0, 0.2);
+  }
+  
+  .service-box img {
+    width: 180px;
+    height: 130px;
+    object-fit: cover;
+    border-radius: 10px;
+  }
+  
+  .service-content {
+    flex: 1;
+    text-align: left;
+    padding: 10px 20px;
+  }
+  
+  .service-title {
+    font-size: 1.6rem;
+    font-weight: 600;
+    margin-bottom: 8px;
+  }
+  
+  .service-description {
+    font-size: 1rem;
+    line-height: 1.5;
+    color: #050505;
+  }
+  
+  /* Buttons */
+  .service-button {
+    display: inline-block;
+    padding: 10px 20px;
+    margin-top: 10px;
+    font-size: 1rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    border-radius: 5px;
+    border: none;
+    cursor: pointer;
+    transition: background 0.3s ease-in-out;
+    color: #fff;
+  }
+  
+  /* Colorful Backgrounds */
+  .adoption { background-color: #ffdddd; }
+  .health { background-color: #d4f8d4; }
+  .supplies { background-color: #e5d4ff; }
+  .donation { background-color: #d4f1ff; }
+  
+  /* Button Colors */
+  .adoption .service-button { background-color: #c0392b; }
+  .health .service-button { background-color: #27ae60; }
+  .supplies .service-button { background-color: #8e44ad; }
+  .donation .service-button { background-color: #2980b9; }
+  
+  .service-button:hover {
+    opacity: 0.8;
+  }
+  
+  /* Responsive Design */
+  @media (max-width: 768px) {
+    .hero-container {
+      flex-direction: column;
+      text-align: center;
+      padding: 30px;
+    }
+  
+    .hero-images {
+      margin-top: 20px;
+    }
+  
+    .hero-images img {
+      width: 150px;
+      height: 150px;
+    }
+  
+    .service-box {
+      flex-direction: column;
+      text-align: center;
+      padding: 20px;
+    }
+  
+    .service-box img {
+      width: 100%;
+      height: auto;
+      margin-top: 15px;
+    }
+  }
+  
