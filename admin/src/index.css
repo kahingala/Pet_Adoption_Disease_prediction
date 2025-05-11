@@ -1,0 +1,18 @@
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@100..900&family=Prata&display=swap');
+@import "tailwindcss";
+
+*{
+    font-family: Outfit;
+}
+
+select, input, textarea{
+    border: 1px solid #7b6020;
+    background-color: #F8F8F8; /* This adds the color inside the field */
+    border-radius: 4px;
+    outline: none; /* Removes default outline on focus */
+}
+
+.active{
+    background-color: #d4c49e;
+    border: #7b6020;
+}
